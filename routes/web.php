@@ -50,9 +50,9 @@ Route::get('users', [UsersController::class, 'create']);
 //Route::get('users', "UsersController@create");
 Route::post('users', [UsersController::class, 'store']);
 
-use App\Http\Controllers\ContactController;
-Route::get('contact', [ContactController::class, 'create']);
-Route::post('contact', [ContactController::class, 'store']);
+//use App\Http\Controllers\ContactController;
+//Route::get('contact', [ContactController::class, 'create']);
+//Route::post('contact', [ContactController::class, 'store']);
 
 Route::get('/test-contact', function () {
     return new App\Mail\Contact([
@@ -66,4 +66,17 @@ use App\Http\Controllers\PhotoController;
 
 Route::get('photo', [PhotoController::class, 'create']);
 Route::post('photo', [PhotoController::class, 'store']);
-//FDE
+
+
+
+use App\Http\Controllers\ContactsController;
+
+Route::get('contact', [ContactsController::class, 'create'])->name('contact.create');
+Route::post('contact', [ContactsController::class, 'store'])->name('contact.store');
+
+
+use App\Http\Controllers\FilmController;
+
+Route::resource('films', FilmController::class);
+Route::delete('films/force/{film}', [FilmController::class, 'forceDestroy'])->name('films.force.destroy');
+Route::put('films/restore/{film}', [FilmController::class, 'restore'])->name('films.restore');
