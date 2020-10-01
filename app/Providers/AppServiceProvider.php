@@ -3,29 +3,20 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
+use App\Models\Category;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
     public function register()
     {
-        $this->app->bind(
-            'App\Repositories\PhotosRepositoryInterface',
-            'App\Repositories\PhotosRepository'
-        );
+        //
     }
 
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
     public function boot()
     {
-        //
+        View::composer(['index', 'create'], function ($view) {
+            $view->with('categories', Category::all());
+        });
     }
 }
