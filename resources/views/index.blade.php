@@ -25,7 +25,7 @@
         <p class="card-header-title">Films</p>
         <div class="select">
             <select onchange="window.location.href = this.value">
-                <option value="{{ route('films.index') }}" @unless($slug) selected @endunless>TTToutes catégories</option>
+                <option value="{{ route('films.index') }}" @unless($slug) selected @endunless>Toutes catégories</option>
                 @foreach($categories as $category)
                 <option value="{{ route('films.category', $category->slug) }}" {{ $slug == $category->slug ? 'selected' : '' }}>{{ $category->name }}</option>
                 @endforeach
