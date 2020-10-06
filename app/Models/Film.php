@@ -10,9 +10,9 @@ class Film extends Model
 {
     use HasFactory, SoftDeletes;
     
-    protected $fillable = ['title', 'year', 'description', 'category_id'];
-    public function category()
-{ 
-    return $this->belongsTo(Category::class); 
-}
+    protected $fillable = ['title', 'year', 'description'];
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Providers;
+use App\Models\Film;
 
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -44,6 +45,9 @@ class RouteServiceProvider extends ServiceProvider
             Route::prefix('api')
                 ->middleware('api')
                 ->group(base_path('routes/api.php'));
+            Route::bind('film', function ($value) {
+                    return Film::with('categories')->find($value) ?? abort(404);
+                });
         });
     }
 
