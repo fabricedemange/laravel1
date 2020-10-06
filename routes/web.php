@@ -83,3 +83,4 @@ Route::put('films/restore/{film}', [FilmController::class, 'restore'])->name('fi
 Route::get('category/{slug}/films', [FilmController::class, 'index'])->name('films.category');
 Route::delete('films/force/{id}', 'FilmController@forceDestroy')->name('films.force.destroy');
 Route::put('films/restore/{id}', 'FilmController@restore')->name('films.restore');
+Route::get('actor/{slug}/films', [FilmController::class, 'index'])->name('films.actor');

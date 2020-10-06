@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Film, Category};
+use App\Models\{Film, Category, Actor};
 use App\Http\Requests\Film as FilmRequest;
+use Illuminate\Support\Facades\Route;
 
 class FilmController extends Controller
 {
@@ -14,16 +15,30 @@ class FilmController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index($slug = null)
-{
-    $query = $slug ? Category::whereSlug($slug)->firstOrFail()->films() : Film::query();
-    $films = $query->withTrashed()->oldest('title')->paginate(5);
-    return view('index', compact('films', 'slug'));
-}
+    {
+        $model = null;
+        if ($slug) {
+            if (Route::currentRouteName() == 'films.category') {
+                $model = new Category;
+            } else {
+                $model = new Actor;
+            }
+        }
+        $query = $model ? $model->whereSlug($slug)->firstOrFail()->films() : Film::query();
+        $films = $query->withTrashed()->oldest('title')->paginate(5);
+        return view('index', compact('films', 'slug'));
+    }
 
-public function create()
-{
-    return view('create');
-}
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        return view('create');
+    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -35,6 +50,7 @@ public function create()
     {
         $film = Film::create($filmRequest->all());
         $film->categories()->attach($filmRequest->cats);
+        $film->actors()->attach($filmRequest->acts);
         return redirect()->route('films.index')->with('info', 'Le film a bien été créé');
     }
 
@@ -68,11 +84,13 @@ public function create()
      * @return \Illuminate\Http\Response
      */
     public function update(FilmRequest $filmRequest, Film $film)
-{
-    $film->update($filmRequest->all());
-    $film->categories()->sync($filmRequest->cats);
-    return redirect()->route('films.index')->with('info', 'Le film a bien été modifié');
-}
+    {
+        $film->update($filmRequest->all());
+        $film->categories()->sync($filmRequest->cats);
+        $film->actors()->sync($filmRequest->acts);
+        return redirect()->route('films.index')->with('info', 'Le film a bien été modifié');
+    }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -84,17 +102,16 @@ public function create()
         $film->delete();
         return back()->with('info', 'Le film a bien été mis dans la corbeille.');
     }
+
     public function forceDestroy($id)
     {
         Film::withTrashed()->whereId($id)->firstOrFail()->forceDelete();
-
         return back()->with('info', 'Le film a bien été supprimé définitivement dans la base de données.');
     }
 
     public function restore($id)
     {
         Film::withTrashed()->whereId($id)->firstOrFail()->restore();
-
         return back()->with('info', 'Le film a bien été restauré.');
     }
 }

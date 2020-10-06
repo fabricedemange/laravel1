@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-
-use App\Models\{ Film, Category };
+use App\Models\{Film, Category, Actor};
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,14 +14,32 @@ class DatabaseSeeder extends Seeder
      * @return void
      */
     public function run()
-{
-    Category::factory()->count(10)->create();
+    {
+        Actor::factory()->count(10)->create();
 
-    $ids = range(1, 10);
+        $categories = [
+            'Comédie',
+            'Drame',
+            'Action',
+            'Fantastique',
+            'Horreur',
+            'Animation',
+            'Espionnage',
+            'Guerre',
+            'Policier',
+            'Pornographique',
+        ];
 
-    Film::factory()->count(40)->create()->each(function ($film) use($ids) {
-        shuffle($ids);
-        $film->categories()->attach(array_slice($ids, 0, rand(1, 4)));
-    });
-}
+        foreach ($categories as $category) {
+            Category::create(['name' => $category, 'slug' => Str::slug($category)]);
+        }
+
+        $ids = range(1, 10);
+        Film::factory()->count(40)->create()->each(function ($film) use ($ids) {
+            shuffle($ids);
+            $film->categories()->attach(array_slice($ids, 0, rand(1, 4)));
+            shuffle($ids);
+            $film->actors()->attach(array_slice($ids, 0, rand(1, 4)));
+        });
+    }
 }

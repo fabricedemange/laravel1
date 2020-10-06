@@ -13,6 +13,11 @@ class Film extends Model
     protected $fillable = ['title', 'year', 'description'];
     public function categories()
     {
-        return $this->belongsToMany(Category::class);
+        return $this->morphedByMany(Category::class, 'filmable');
+    }
+
+    public function actors()
+    {
+        return $this->morphedByMany(Actor::class, 'filmable');
     }
 }
